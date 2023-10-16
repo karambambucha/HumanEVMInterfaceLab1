@@ -133,6 +133,7 @@ namespace HumanEVMInterface
                     default:
                         break;
                 }
+                SelectionSize = (int)SelectionSizeNumeric.Value;
             }
             catch (Exception exp)
             {
