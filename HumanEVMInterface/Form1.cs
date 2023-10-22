@@ -16,7 +16,9 @@ namespace HumanEVMInterface
         public int RouteLength; //длина маршрута
         public int RouteTypeNumbers; //кол-во вершин
         public double[,] ProbabiltyMatrix;
-        public double[,] StepTimes; //время ходьбы через каждую вершину
+        public double[,] ProbabiltyMatrix2; 
+        public double[,] StepTimes; //время ходьбы через каждую вершину 1 подтемы
+        public double[,] StepTimes2; //время ходьбы через каждую вершину 2 подтемы
         public double[] SubthemeProbablity; //вероятность выбора подтемы
         public double MistakeProbablity; //вероятность ошибки
         public MistakeType MistakeType; //тип ошибки
@@ -27,8 +29,12 @@ namespace HumanEVMInterface
             InitializeComponent();
             StepTimesDataGridView.Columns.Add("Column 1", "1");
             StepTimesDataGridView.Columns.Add("Column 2", "2");
+            StepTimesDataGridView2.Columns.Add("Column 1", "1");
+            StepTimesDataGridView2.Columns.Add("Column 2", "2");
             StepTimesDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            StepTimesDataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
             ProbabilityMatrixDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            ProbabilityMatrixDataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
             if (int.TryParse(RouteTypeNumberNumeric.Text, out int rowCount))
             {
                 ProbabilityMatrixDataGridView.Rows.Clear();
@@ -40,6 +46,19 @@ namespace HumanEVMInterface
                 {
                     ProbabilityMatrixDataGridView.Rows.Add();
                     StepTimesDataGridView.Rows.Add();
+                }
+            }
+            if (int.TryParse(RouteTypeNumberNumeric2.Text, out int rowCount1))
+            {
+                ProbabilityMatrixDataGridView2.Rows.Clear();
+                ProbabilityMatrixDataGridView2.Columns.Clear();
+                for (int i = 0; i < rowCount1; i++)
+                    ProbabilityMatrixDataGridView2.Columns.Add("Column" + i, "" + (i + 1));
+
+                for (int i = 0; i < rowCount1; i++)
+                {
+                    ProbabilityMatrixDataGridView2.Rows.Add();
+                    StepTimesDataGridView2.Rows.Add();
                 }
             }
         }
@@ -88,30 +107,36 @@ namespace HumanEVMInterface
                     throw new Exception("Тип ошибки не выбран!");
                 }
                 for (int row = 0; row < StepTimesDataGridView.Rows.Count; row++)
-                {
                     for (int col = 0; col < StepTimesDataGridView.Columns.Count; col++)
                     {
                         if (!double.TryParse((string)StepTimesDataGridView.Rows[row].Cells[col].Value, out double cellValue))
-                        {
                             throw new Exception("Матрица длины шагов не полностью записана!");
-                        }
                         StepTimes[col, row] = cellValue;
                     }
-                }
                 for (int row = 0; row < ProbabilityMatrixDataGridView.Rows.Count; row++)
-                {
                     for (int col = 0; col < ProbabilityMatrixDataGridView.Columns.Count; col++)
                     {
                         if (!double.TryParse((string)ProbabilityMatrixDataGridView.Rows[row].Cells[col].Value, out double cellValue))
-                        {
                             throw new Exception("Матрица вероятностей не полностью записана!");
-                        }
                         ProbabiltyMatrix[col, row] = cellValue;
                     }
-                }
-                if (!CheckMatrix(ProbabiltyMatrix))
+                for (int row = 0; row < StepTimesDataGridView2.Rows.Count; row++)
+                    for (int col = 0; col < StepTimesDataGridView2.Columns.Count; col++)
+                    {
+                        if (!double.TryParse((string)StepTimesDataGridView2.Rows[row].Cells[col].Value, out double cellValue))
+                            throw new Exception("Матрица длины шагов не полностью записана!");
+                        StepTimes2[col, row] = cellValue;
+                    }
+                for (int row = 0; row < ProbabilityMatrixDataGridView2.Rows.Count; row++)
+                    for (int col = 0; col < ProbabilityMatrixDataGridView2.Columns.Count; col++)
+                    {
+                        if (!double.TryParse((string)ProbabilityMatrixDataGridView2.Rows[row].Cells[col].Value, out double cellValue))
+                            throw new Exception("Матрица вероятностей не полностью записана!");
+                        ProbabiltyMatrix2[col, row] = cellValue;
+                    }
+                if (!CheckMatrix(ProbabiltyMatrix) || !CheckMatrix(ProbabiltyMatrix2))
                     throw new Exception("Суммы строк и столбцов НЕ равны 1.");
-                if (!CheckDiagonalZero(ProbabiltyMatrix))
+                if (!CheckDiagonalZero(ProbabiltyMatrix) || !CheckDiagonalZero(ProbabiltyMatrix2))
                     throw new Exception("Не все диагональные ячейки равны 0.");
                 RouteTypeNumbers = (int)RouteTypeNumberNumeric.Value;
                 RouteLength = (int)RouteLengthNumeric.Value;
@@ -179,6 +204,25 @@ namespace HumanEVMInterface
                 ProbabilityMatrixDataGridView.Columns.Add("Column" + (newValue - 1), "" + newValue);
                 ProbabilityMatrixDataGridView.Rows.Add();
                 StepTimesDataGridView.Rows.Add();
+            }
+        }
+
+        private void RouteTypeNumberNumeric2_ValueChanged(object sender, EventArgs e)
+        {
+            string _oldValue = ((UpDownBase)sender).Text;
+            int.TryParse(_oldValue, out int oldValue);
+            int.TryParse(((NumericUpDown)sender).Value.ToString(), out int newValue);
+            if (oldValue > newValue)
+            {
+                ProbabilityMatrixDataGridView2.Rows.RemoveAt(oldValue - 1);
+                ProbabilityMatrixDataGridView2.Columns.RemoveAt(oldValue - 1);
+                StepTimesDataGridView2.Rows.RemoveAt(oldValue - 1);
+            }
+            else
+            {
+                ProbabilityMatrixDataGridView2.Columns.Add("Column" + (newValue - 1), "" + newValue);
+                ProbabilityMatrixDataGridView2.Rows.Add();
+                StepTimesDataGridView2.Rows.Add();
             }
         }
     }
