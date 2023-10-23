@@ -93,8 +93,9 @@ namespace HumanEVMInterface
             {
                 if (rowSums[i] == 0)
                 {
-                    if (numberSubTheme == 1) RoutesFinish1.Add(i + 1);
+                    if (numberSubTheme == 1) RoutesFinish1.Add(i);
                     else RoutesFinish2.Add(i);
+                    break;
                 }
             }
 
@@ -103,8 +104,9 @@ namespace HumanEVMInterface
             {
                 if (rowSums[i] == 0)
                 {
-                    if (numberSubTheme == 1) RoutesFinish1.Add(i + 1); // Определение конечных вершин
+                    if (numberSubTheme == 1) RoutesFinish1.Add(i); // Определение конечных вершин
                     else RoutesFinish2.Add(i);
+                    break;
                 }
                 else if (rowSums[i] != 1)
                     return false;
@@ -122,8 +124,8 @@ namespace HumanEVMInterface
             try
             {
                 SubthemeProbablity = new double[2];
-                StepTimes = new double[2, (int)RouteTypeNumberNumeric.Value];
-                StepTimes2 = new double[2, (int)RouteTypeNumberNumeric2.Value];
+                StepTimes = new double[(int)RouteTypeNumberNumeric.Value, 2];
+                StepTimes2 = new double[(int)RouteTypeNumberNumeric2.Value, 2];
                 ProbabiltyMatrix = new double[(int)RouteTypeNumberNumeric.Value, (int)RouteTypeNumberNumeric.Value];
                 ProbabiltyMatrix2 = new double[(int)RouteTypeNumberNumeric2.Value, (int)RouteTypeNumberNumeric2.Value];
 
