@@ -80,105 +80,110 @@ namespace HumanEVMInterface
            
         }
 
+        private void readParameters()
+        {
+            RouteMatrix1 = new List<List<int>>();
+            RouteMatrix2 = new List<List<int>>();
+            RouteProbablity1 = new List<double>();
+            RouteProbablity2 = new List<double>();
+            UniqueNodes = new HashSet<int>();
+            SubthemeProbablity = new double[2];
+            StepTimes = new List<double[]>();
+            RouteLength = (int)RouteLengthNumeric.Value;
+
+            if (MistakeTypeComboBox.Text == "")
+            {
+                throw new Exception("Тип ошибки не выбран!");
+            }
+            for (int row = 0; row < StepTimesDataGridView.RowCount; row++)
+            {
+                if (!double.TryParse((string)StepTimesDataGridView.Rows[row].Cells[0].Value, out double cellValue1))
+                    throw new Exception("Матрица времен не полностью записана!");
+                if (!double.TryParse((string)StepTimesDataGridView.Rows[row].Cells[1].Value, out double cellValue2))
+                    throw new Exception("Матрица времен не полностью записана!");
+                StepTimes.Add(new double[] { cellValue1, cellValue2 });
+            }
+            for (int row = 0; row < ProbabilityMatrixDataGridView1.Rows.Count; row++)
+            {
+                RouteMatrix1.Add(new List<int>());
+                for (int col = 0; col < ProbabilityMatrixDataGridView1.Columns.Count; col++)
+                {
+                    if ((string)ProbabilityMatrixDataGridView1.Rows[row].Cells[col].Value != null)
+                    {
+                        if (!int.TryParse((string)ProbabilityMatrixDataGridView1.Rows[row].Cells[col].Value, out int cellValue))
+                            throw new Exception("Не верно записаны вершины матрицы маршрутов!");
+                        RouteMatrix1[row].Add(cellValue);
+                        UniqueNodes.Add(cellValue);
+                        if (UniqueNodes.Count > RouteLength)
+                            throw new Exception("Количество вершин больше длины маршрута!");
+                    }
+                }
+            }
+            for (int row = 0; row < ProbabilityMatrixDataGridView2.Rows.Count; row++)
+            {
+                RouteMatrix2.Add(new List<int>());
+                for (int col = 0; col < ProbabilityMatrixDataGridView2.Columns.Count; col++)
+                {
+                    if ((string)ProbabilityMatrixDataGridView2.Rows[row].Cells[col].Value != null)
+                    {
+                        if (!int.TryParse((string)ProbabilityMatrixDataGridView2.Rows[row].Cells[col].Value, out int cellValue))
+                            throw new Exception("Не верно записаны вершины матрицы маршрутов!");
+                        RouteMatrix2[row].Add(cellValue);
+                        UniqueNodes.Add(cellValue);
+                        if (UniqueNodes.Count > RouteLength)
+                            throw new Exception("Количество вершин больше длины маршрута!");
+                    }
+                }
+            }
+            foreach (var row in RouteMatrix1)
+            {
+                if (row[0] != 1)
+                    throw new Exception("Не все пути начинаются с 1!");
+            }
+            foreach (var row in RouteMatrix2)
+            {
+                if (row[0] != 1)
+                    throw new Exception("Не все пути начинаются с 1!");
+            }
+            for (int i = 0; i < RouteProbablityDataGrid1.Rows.Count; i++)
+            {
+                if (!double.TryParse((string)RouteProbablityDataGrid1.Rows[i].Cells[0].Value, out double cellValue))
+                    throw new Exception("Не верно записаны вероятности выбора маршрутов!");
+                RouteProbablity1.Add(cellValue);
+            }
+            for (int i = 0; i < RouteProbablityDataGrid2.Rows.Count; i++)
+            {
+                if (!double.TryParse((string)RouteProbablityDataGrid2.Rows[i].Cells[0].Value, out double cellValue))
+                    throw new Exception("Не верно записаны вероятности выбора маршрутов!");
+                RouteProbablity2.Add(cellValue);
+            }
+            if (RouteProbablity1.Sum() != 1 || RouteProbablity2.Sum() != 1)
+                throw new Exception("Суммы вероятностей равны 1!");
+            SubthemeProbablity[0] = (double)SubthemeProbablityNumeric.Value;
+            SubthemeProbablity[1] = 1 - SubthemeProbablity[0];
+            MistakeProbablity = (double)MistakeProbabilityNumeric.Value;
+            switch (MistakeTypeComboBox.Text)
+            {
+                case "Повторить шаг":
+                    MistakeType = MistakeType.Repeat;
+                    break;
+                case "Сделать шаг назад":
+                    MistakeType = MistakeType.TurnBack;
+                    break;
+                case "Начать заново":
+                    MistakeType = MistakeType.Restart;
+                    break;
+                default:
+                    break;
+            }
+            SelectionSize = (int)SelectionSizeNumeric.Value;
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             try
             {
-                RouteMatrix1 = new List<List<int>>();
-                RouteMatrix2 = new List<List<int>>();
-                RouteProbablity1 = new List<double>();
-                RouteProbablity2 = new List<double>();
-                UniqueNodes = new HashSet<int>();
-                SubthemeProbablity = new double[2];
-                StepTimes = new List<double[]>();
-                RouteLength = 10;
-
-                if (MistakeTypeComboBox.Text == "")
-                {
-                    throw new Exception("Тип ошибки не выбран!");
-                }
-                for (int row = 0; row < StepTimesDataGridView.RowCount; row++)
-                {
-                    if (!double.TryParse((string)StepTimesDataGridView.Rows[row].Cells[0].Value, out double cellValue1))
-                        throw new Exception("Матрица времен не полностью записана!");
-                    if (!double.TryParse((string)StepTimesDataGridView.Rows[row].Cells[1].Value, out double cellValue2))
-                        throw new Exception("Матрица времен не полностью записана!");
-                    StepTimes.Add(new double[] {cellValue1,cellValue2 });
-                }
-                for (int row = 0; row < ProbabilityMatrixDataGridView1.Rows.Count; row++)
-                {
-                    RouteMatrix1.Add(new List<int>());
-                    for (int col = 0; col < ProbabilityMatrixDataGridView1.Columns.Count; col++)
-                    {
-                        if((string)ProbabilityMatrixDataGridView1.Rows[row].Cells[col].Value != null)
-                        {
-                            if (!int.TryParse((string)ProbabilityMatrixDataGridView1.Rows[row].Cells[col].Value, out int cellValue))
-                                throw new Exception("Не верно записаны вершины матрицы маршрутов!");
-                            RouteMatrix1[row].Add(cellValue);
-                            UniqueNodes.Add(cellValue);
-                            if (UniqueNodes.Count > RouteLength)
-                                throw new Exception("Количество вершин больше длины маршрута!");
-                        }
-                    }
-                }
-                for (int row = 0; row < ProbabilityMatrixDataGridView2.Rows.Count; row++)
-                {
-                    RouteMatrix2.Add(new List<int>());
-                    for (int col = 0; col < ProbabilityMatrixDataGridView2.Columns.Count; col++)
-                    {
-                        if ((string)ProbabilityMatrixDataGridView2.Rows[row].Cells[col].Value != null)
-                        {
-                            if (!int.TryParse((string)ProbabilityMatrixDataGridView2.Rows[row].Cells[col].Value, out int cellValue))
-                                throw new Exception("Не верно записаны вершины матрицы маршрутов!");
-                            RouteMatrix2[row].Add(cellValue);
-                            UniqueNodes.Add(cellValue);
-                            if (UniqueNodes.Count > RouteLength)
-                                throw new Exception("Количество вершин больше длины маршрута!");
-                        }
-                    }
-                }
-                foreach (var row in RouteMatrix1)
-                {
-                    if (row[0] != 1)
-                        throw new Exception("Не все пути начинаются с 1!");
-                }
-                foreach (var row in RouteMatrix2)
-                {
-                    if (row[0] != 1)
-                        throw new Exception("Не все пути начинаются с 1!");
-                }
-                for (int i = 0; i < RouteProbablityDataGrid1.Rows.Count; i++)
-                {
-                    if (!double.TryParse((string)RouteProbablityDataGrid1.Rows[i].Cells[0].Value, out double cellValue))
-                        throw new Exception("Не верно записаны вероятности выбора маршрутов!");
-                    RouteProbablity1.Add(cellValue);
-                }
-                for (int i = 0; i < RouteProbablityDataGrid2.Rows.Count; i++)
-                {
-                    if (!double.TryParse((string)RouteProbablityDataGrid2.Rows[i].Cells[0].Value, out double cellValue))
-                        throw new Exception("Не верно записаны вероятности выбора маршрутов!");
-                    RouteProbablity2.Add(cellValue);
-                }
-                if (RouteProbablity1.Sum() != 1 || RouteProbablity2.Sum() != 1)
-                RouteLength = (int)RouteLengthNumeric.Value;
-                SubthemeProbablity[0] = (double)SubthemeProbablityNumeric.Value;
-                SubthemeProbablity[1] = 1 - SubthemeProbablity[0];
-                MistakeProbablity = (double)MistakeProbabilityNumeric.Value;
-                switch (MistakeTypeComboBox.Text)
-                {
-                    case "Повторить шаг":
-                        MistakeType = MistakeType.Repeat;
-                        break;
-                    case "Сделать шаг назад":
-                        MistakeType = MistakeType.TurnBack;
-                        break;
-                    case "Начать заново":
-                        MistakeType = MistakeType.Restart;
-                        break;
-                    default:
-                        break;
-                }
-                SelectionSize = (int)SelectionSizeNumeric.Value;
+                readParameters();
                 var firstThemeTimes = new List<double>();
                 var secondThemeTimes = new List<double>();
                 
@@ -349,5 +354,57 @@ namespace HumanEVMInterface
                 ProbabilityMatrixDataGridView2.Columns.Add("Column" + (newValue - 1), "" + (newValue));
             }
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            readParameters();
+            double lambdaCustomers = (double)lambda1Numeric.Value;
+            double lambdaFail = (double)lambda2Numeric.Value;
+            double failTime = 1.0 / lambdaFail;
+            double totalTimeWork = 0;
+            double totalTimeRecover = 0;
+            for (int i = 0; i < SelectionSize; i++)
+            {
+                totalTimeWork += StartModeling(failTime, lambdaCustomers);
+                totalTimeRecover += Imitation(RouteMatrix2, StepTimes, MistakeType, MistakeProbablity, RouteProbablity2);
+            }
+            double price1 = (double)price1Numeric.Value;
+            double price2 = (double)price2Numeric.Value;
+            double sum = (price1 * totalTimeWork + price2 * totalTimeRecover) / (failTime * SelectionSize + totalTimeRecover);
+            MessageBox.Show($"Время работы до отказа: {failTime}, всего работало: {totalTimeWork}, время восстановления: {totalTimeRecover}, коэффициент: {sum}");
+        }
+
+        private double StartModeling(double modelingTime, double lambda)
+        {
+            Random random = new Random();
+            double currentTime = 0.0;
+            double totalServingTime = 0;
+            Queue<double> arrivalTimes = new Queue<double>();
+            double serviceCompletionTime = double.PositiveInfinity;
+            bool isBusy = false;
+            while (currentTime < modelingTime)
+            {
+                double interarrivalTime = -Math.Log(random.NextDouble()) / lambda;
+                arrivalTimes.Enqueue(currentTime + interarrivalTime);
+                if (arrivalTimes.Count > 0 && currentTime >= arrivalTimes.Peek())
+                {
+                    arrivalTimes.Dequeue();
+                    if (currentTime >= serviceCompletionTime && serviceCompletionTime < modelingTime)
+                        isBusy = false;
+
+                    if (!isBusy)
+                    {
+                        double serviceTime = Imitation(RouteMatrix1, StepTimes, MistakeType, MistakeProbablity, RouteProbablity1);
+                        serviceCompletionTime = currentTime + serviceTime;
+                        isBusy = true;
+                        if (serviceCompletionTime < modelingTime)
+                            totalServingTime += serviceTime;
+                    }
+                }
+                currentTime = arrivalTimes.Peek();
+            }
+            return totalServingTime;
+        }
+
     }
 }

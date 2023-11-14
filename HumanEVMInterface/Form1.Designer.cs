@@ -54,6 +54,15 @@
             this.label10 = new System.Windows.Forms.Label();
             this.RouteProbablityDataGrid2 = new System.Windows.Forms.DataGridView();
             this.label12 = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
+            this.label13 = new System.Windows.Forms.Label();
+            this.lambda1Numeric = new System.Windows.Forms.NumericUpDown();
+            this.lambda2Numeric = new System.Windows.Forms.NumericUpDown();
+            this.label14 = new System.Windows.Forms.Label();
+            this.price1Numeric = new System.Windows.Forms.NumericUpDown();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.price2Numeric = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.ProbabilityMatrixDataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Routes1NumberNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.RouteLengthNumeric)).BeginInit();
@@ -65,6 +74,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.Routes2NumberNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.RouteProbablityDataGrid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.RouteProbablityDataGrid2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.lambda1Numeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.lambda2Numeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.price1Numeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.price2Numeric)).BeginInit();
             this.SuspendLayout();
             // 
             // ProbabilityMatrixDataGridView1
@@ -84,7 +97,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(126, 49);
             this.button1.TabIndex = 1;
-            this.button1.Text = "Запуск";
+            this.button1.Text = "Запуск 1 лр";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -173,6 +186,11 @@
             // SubthemeProbablityNumeric
             // 
             this.SubthemeProbablityNumeric.DecimalPlaces = 2;
+            this.SubthemeProbablityNumeric.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
             this.SubthemeProbablityNumeric.Location = new System.Drawing.Point(12, 148);
             this.SubthemeProbablityNumeric.Maximum = new decimal(new int[] {
             1,
@@ -221,6 +239,11 @@
             // MistakeProbabilityNumeric
             // 
             this.MistakeProbabilityNumeric.DecimalPlaces = 2;
+            this.MistakeProbabilityNumeric.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
             this.MistakeProbabilityNumeric.Location = new System.Drawing.Point(12, 227);
             this.MistakeProbabilityNumeric.Maximum = new decimal(new int[] {
             1,
@@ -379,11 +402,166 @@
             this.label12.TabIndex = 28;
             this.label12.Text = "Матрица вероятнестей \r\nвыбора маршрута\r\n1 подтемы";
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(144, 389);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(126, 49);
+            this.button2.TabIndex = 29;
+            this.button2.Text = "Запуск 2 лр";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(147, 210);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(124, 13);
+            this.label13.TabIndex = 31;
+            this.label13.Text = "Интенсивность заявок";
+            // 
+            // lambda1Numeric
+            // 
+            this.lambda1Numeric.DecimalPlaces = 2;
+            this.lambda1Numeric.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.lambda1Numeric.Location = new System.Drawing.Point(151, 226);
+            this.lambda1Numeric.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.lambda1Numeric.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            458752});
+            this.lambda1Numeric.Name = "lambda1Numeric";
+            this.lambda1Numeric.Size = new System.Drawing.Size(120, 20);
+            this.lambda1Numeric.TabIndex = 30;
+            this.lambda1Numeric.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            65536});
+            // 
+            // lambda2Numeric
+            // 
+            this.lambda2Numeric.DecimalPlaces = 2;
+            this.lambda2Numeric.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.lambda2Numeric.Location = new System.Drawing.Point(151, 269);
+            this.lambda2Numeric.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.lambda2Numeric.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            458752});
+            this.lambda2Numeric.Name = "lambda2Numeric";
+            this.lambda2Numeric.Size = new System.Drawing.Size(120, 20);
+            this.lambda2Numeric.TabIndex = 32;
+            this.lambda2Numeric.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(148, 255);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(123, 13);
+            this.label14.TabIndex = 33;
+            this.label14.Text = "Интенсивность отказа";
+            // 
+            // price1Numeric
+            // 
+            this.price1Numeric.Location = new System.Drawing.Point(151, 312);
+            this.price1Numeric.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.price1Numeric.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.price1Numeric.Name = "price1Numeric";
+            this.price1Numeric.Size = new System.Drawing.Size(120, 20);
+            this.price1Numeric.TabIndex = 34;
+            this.price1Numeric.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(148, 296);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(20, 13);
+            this.label15.TabIndex = 35;
+            this.label15.Text = "P1";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(148, 333);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(20, 13);
+            this.label16.TabIndex = 37;
+            this.label16.Text = "P2";
+            // 
+            // price2Numeric
+            // 
+            this.price2Numeric.Location = new System.Drawing.Point(151, 349);
+            this.price2Numeric.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.price2Numeric.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.price2Numeric.Name = "price2Numeric";
+            this.price2Numeric.Size = new System.Drawing.Size(120, 20);
+            this.price2Numeric.TabIndex = 36;
+            this.price2Numeric.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.label16);
+            this.Controls.Add(this.price2Numeric);
+            this.Controls.Add(this.label15);
+            this.Controls.Add(this.price1Numeric);
+            this.Controls.Add(this.label14);
+            this.Controls.Add(this.lambda2Numeric);
+            this.Controls.Add(this.label13);
+            this.Controls.Add(this.lambda1Numeric);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.RouteProbablityDataGrid2);
             this.Controls.Add(this.label10);
@@ -422,6 +600,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.Routes2NumberNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.RouteProbablityDataGrid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.RouteProbablityDataGrid2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.lambda1Numeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.lambda2Numeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.price1Numeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.price2Numeric)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -455,6 +637,15 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.DataGridView RouteProbablityDataGrid2;
         private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.NumericUpDown lambda1Numeric;
+        private System.Windows.Forms.NumericUpDown lambda2Numeric;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.NumericUpDown price1Numeric;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.NumericUpDown price2Numeric;
     }
 }
 
