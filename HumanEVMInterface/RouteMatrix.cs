@@ -3,11 +3,12 @@ using System.Collections.Generic;
 
 namespace HumanEVMInterface
 {
-    internal class RouteMatrix
+    public class RouteMatrix
     {
         private List<List<int>> routes;
         private List<double[]> times;
         public double totalTime = 0;
+        public double mistakenTime = 0;
         Random random;
 
         public RouteMatrix(List<List<int>> routeMatrix, List<double[]> times, Random random)
@@ -27,7 +28,7 @@ namespace HumanEVMInterface
             return nextRoute;
         }
 
-        public int MakeTransition(int currentRoute, int currentNode)
+        public int MakeTransition(int currentRoute, int currentNode, bool mistake)
         {
             List<int> thisRoute = GetThisRoute(currentRoute, currentNode, out double[] timeSpent);
             double currTime;
@@ -36,6 +37,8 @@ namespace HumanEVMInterface
             else
                 currTime = timeSpent[0] + random.NextDouble() * (timeSpent[1] - timeSpent[0]);
             totalTime += currTime;
+            if (mistake)
+                mistakenTime += currTime;
             if (currentNode + 1 < thisRoute.Count)
             {
                 return currentNode + 1;

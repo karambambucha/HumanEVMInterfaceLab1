@@ -196,13 +196,13 @@ namespace HumanEVMInterface
                     {
                         currentMatrix = RouteMatrix1;
                         currentProbMatrix = RouteProbablity1;
-                        firstThemeTimes.Add(Imitation(currentMatrix, StepTimes, MistakeType, MistakeProbablity, currentProbMatrix));
+                        firstThemeTimes.Add(Imitation(currentMatrix, StepTimes, MistakeType, MistakeProbablity, currentProbMatrix).totalTime);
                     }
                     else
                     {
                         currentMatrix = RouteMatrix2;
                         currentProbMatrix = RouteProbablity2;
-                        secondThemeTimes.Add(Imitation(currentMatrix, StepTimes, MistakeType, MistakeProbablity, currentProbMatrix));
+                        secondThemeTimes.Add(Imitation(currentMatrix, StepTimes, MistakeType, MistakeProbablity, currentProbMatrix).totalTime);
                     }
                 }
                 var totalTimes = firstThemeTimes.Concat(secondThemeTimes).ToArray();
@@ -217,7 +217,7 @@ namespace HumanEVMInterface
             }
         }
 
-        public double Imitation(List<List<int>> matrix, List<double[]> times, MistakeType mistakeType, double mistakeProbablity, List<double> probablityMatrix)
+        public RouteMatrix Imitation(List<List<int>> matrix, List<double[]> times, MistakeType mistakeType, double mistakeProbablity, List<double> probablityMatrix)
         {
             int currentNode = 0;
             RouteMatrix routeMatrix = new RouteMatrix(matrix, times, random);
@@ -234,30 +234,36 @@ namespace HumanEVMInterface
                     break;
                 }
             }
-
+            int mistakenNodes = 0;
             for (int i = 0; i < matrix[currentRoute].Count;)
             {
                 int previousNode = currentNode;
                 Console.Write($"Step {i + 1}: Route {currentRoute + 1}, Node {matrix[currentRoute][currentNode]}, ");
-                currentNode = routeMatrix.MakeTransition(currentRoute, currentNode);
+                if (mistakenNodes > 0)
+                {
+                    currentNode = routeMatrix.MakeTransition(currentRoute, currentNode, true);
+                    mistakenNodes--;
+                }
+                else
+                    currentNode = routeMatrix.MakeTransition(currentRoute, currentNode, false);
                 if (random.NextDouble() < mistakeProbablity && currentNode != matrix[currentRoute].Count - 1)
                 {
                     switch (mistakeType)
                     {
                         case MistakeType.Repeat:
-                            Console.WriteLine("Repeat the node");
                             currentNode = previousNode;
                             i = previousNode;
+                            mistakenNodes = 1;
                             break;
                         case MistakeType.TurnBack:
-                            Console.WriteLine("Turn back");
                             currentNode = previousNode - 1;
                             if (currentNode < 0)
                                 currentNode = 0;
                             i = currentNode;
+                            mistakenNodes = 2;
                             break;
                         case MistakeType.Restart:
-                            Console.WriteLine("Restart");
+                            mistakenNodes = currentNode;
                             currentNode = 0;
                             i = 0;
                             break;
@@ -270,7 +276,7 @@ namespace HumanEVMInterface
                     i++;
                 }
             }
-            return routeMatrix.totalTime;
+            return routeMatrix;
         }
 
         private void ProbabilityMatrixDataGridView_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
@@ -360,18 +366,22 @@ namespace HumanEVMInterface
             readParameters();
             double lambdaCustomers = (double)lambda1Numeric.Value;
             double lambdaFail = (double)lambda2Numeric.Value;
-            double failTime = 1.0 / lambdaFail;
-            double totalTimeWork = 0;
+            double failTime = 0;
+            double totalDelayTime = 0;
             double totalTimeRecover = 0;
+            double totalTime = 0;
+
             for (int i = 0; i < SelectionSize; i++)
             {
-                totalTimeWork += StartModeling(failTime, lambdaCustomers);
-                totalTimeRecover += Imitation(RouteMatrix2, StepTimes, MistakeType, MistakeProbablity, RouteProbablity2);
+                failTime = -Math.Log(random.NextDouble()) / lambdaFail;
+                totalTime += failTime;
+                totalDelayTime += StartModeling(failTime, lambdaCustomers);
+                totalTimeRecover += Imitation(RouteMatrix2, StepTimes, MistakeType, MistakeProbablity, RouteProbablity2).totalTime;
             }
             double price1 = (double)price1Numeric.Value;
             double price2 = (double)price2Numeric.Value;
-            double sum = (price1 * totalTimeWork + price2 * totalTimeRecover) / (failTime * SelectionSize + totalTimeRecover);
-            MessageBox.Show($"Время работы до отказа: {failTime}, всего работало: {totalTimeWork}, время восстановления: {totalTimeRecover}, коэффициент: {sum}");
+            double sum = (price1 * totalDelayTime + price2 * totalTimeRecover) / (totalTime + totalTimeRecover);
+            MessageBox.Show($"Время задержек: {totalDelayTime}, время восстановления: {totalTimeRecover}, коэффициент: {sum}");
         }
 
         private double StartModeling(double modelingTime, double lambda)
@@ -379,6 +389,7 @@ namespace HumanEVMInterface
             Random random = new Random();
             double currentTime = 0.0;
             double totalServingTime = 0;
+            double totalMistakenTime = 0;
             Queue<double> arrivalTimes = new Queue<double>();
             double serviceCompletionTime = double.PositiveInfinity;
             bool isBusy = false;
@@ -394,7 +405,9 @@ namespace HumanEVMInterface
 
                     if (!isBusy)
                     {
-                        double serviceTime = Imitation(RouteMatrix1, StepTimes, MistakeType, MistakeProbablity, RouteProbablity1);
+                        var run = Imitation(RouteMatrix1, StepTimes, MistakeType, MistakeProbablity, RouteProbablity1);
+                        double serviceTime = run.totalTime;
+                        totalMistakenTime += run.mistakenTime;
                         serviceCompletionTime = currentTime + serviceTime;
                         isBusy = true;
                         if (serviceCompletionTime < modelingTime)
@@ -403,7 +416,7 @@ namespace HumanEVMInterface
                 }
                 currentTime = arrivalTimes.Peek();
             }
-            return totalServingTime;
+            return totalMistakenTime;
         }
 
     }
