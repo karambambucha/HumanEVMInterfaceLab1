@@ -272,7 +272,7 @@
             // 
             this.SelectionSizeNumeric.Location = new System.Drawing.Point(12, 266);
             this.SelectionSizeNumeric.Maximum = new decimal(new int[] {
-            1000,
+            100000,
             0,
             0,
             0});
@@ -289,6 +289,7 @@
             0,
             0,
             0});
+            this.SelectionSizeNumeric.ValueChanged += new System.EventHandler(this.SelectionSizeNumeric_ValueChanged);
             // 
             // StepTimesDataGridView
             // 
@@ -589,6 +590,7 @@
             this.Controls.Add(this.ProbabilityMatrixDataGridView1);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.ProbabilityMatrixDataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Routes1NumberNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.RouteLengthNumeric)).EndInit();

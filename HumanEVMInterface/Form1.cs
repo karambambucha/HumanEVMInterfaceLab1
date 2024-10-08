@@ -419,5 +419,14 @@ namespace HumanEVMInterface
             return totalMistakenTime;
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void SelectionSizeNumeric_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
